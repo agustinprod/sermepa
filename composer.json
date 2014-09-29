@@ -1,0 +1,19 @@
+{
+    "name": "killgt/sermepa",
+    "description": "",
+    "authors": [
+        {
+            "name": "killgt",
+            "email": "killgt@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Killgt\\Sermepa": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
