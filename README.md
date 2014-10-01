@@ -18,8 +18,7 @@ $request->setCallbackURL('http://example.com/callback');
 $request->setSuccessURL('http://example.com/ok');
 $request->setErrorURL('http://example.com/error');
 $request->setPayer('Peter Bishop');
-$request->setProductDescription('The machine
-');
+$request->setProductDescription('The machine');
 
 echo $request->render(); //outputs the form and auto-submit
 ```
