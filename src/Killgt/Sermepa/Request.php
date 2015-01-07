@@ -116,7 +116,7 @@ class Request {
 			}
 
 			if ( (int)$Ds_Response >= 100) {
-				throw new CallbackErrorException("Invalid DS_Response returned", $DS_Response);
+				throw new CallbackErrorException("Invalid DS_Response returned", $Ds_Response);
 			}
 
 		    return true;
