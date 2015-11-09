@@ -42,7 +42,7 @@ class RequestTest extends PHPUnit_Framework_TestCase {
 
 	public function testGetURL()
 	{
-		$testURL = "https://sis-t.redsys.es:25443/sis/realizarPago";
+		$testURL = "http://sis-d.redsys.es/sis/realizarPago";
 		$productionURL = "https://sis.sermepa.es/sis/realizarPago";
 
 		$request = new Request;
@@ -115,9 +115,9 @@ class RequestTest extends PHPUnit_Framework_TestCase {
 
 	public function testSignature()
 	{
-		$validSignature = "AB44EAC503809841C9BC767C6343B135CE17EE16";
+		$validSignature = "4RvVYv/GaPyQKnCPwVaj5j27ZgY5o5soFr/v6wUtoMA=";
 
-		$request = new Request(5556123123, 'abcdefg123456', false, 1, 'MassiveDynamics');
+		$request = new Request(5556123123, 'Mk9m98IfEblmPfrpsawt7BmxObt98Jev', false, 1, 'MassiveDynamics');
 		$request->setAmount(45.54);
 		$request->setOrder('201409killgt');
 		$request->setTransactionType(0);
@@ -132,7 +132,7 @@ class RequestTest extends PHPUnit_Framework_TestCase {
 
 	public function testValidate()
 	{
-		$request = new Request(5556123123, 'abcdefg123456', false, 1, 'MassiveDynamics');
+		$request = new Request(5556123123, 'Mk9m98IfEblmPfrpsawt7BmxObt98Jev', false, 1, 'MassiveDynamics');
 
 		$this->assertFalse($request->validateRequest());
 
@@ -163,7 +163,7 @@ class RequestTest extends PHPUnit_Framework_TestCase {
 
 	public function testRender()
 	{
-		$request = new Request(5556123123, 'abcdefg123456', false, 1, 'MassiveDynamics');
+		$request = new Request(5556123123, 'Mk9m98IfEblmPfrpsawt7BmxObt98Jev', false, 1, 'MassiveDynamics');
 
 		$request->setAmount(45.54);
 		$request->setOrder('201409killgt');
@@ -176,23 +176,10 @@ class RequestTest extends PHPUnit_Framework_TestCase {
 
 
 		$realHTML = '
-		<form action="https://sis-t.redsys.es:25443/sis/realizarPago" method="post" id="sermepaForm" name="sermepaForm" >
-			<input type="hidden" name="Ds_Merchant_Amount" value="4554" />
-			<input type="hidden" name="Ds_Merchant_Currency" value="978" />
-			<input type="hidden" name="Ds_Merchant_Order" value="201409killgt" />
-			<input type="hidden" name="Ds_Merchant_MerchantData" value="" />
-			<input type="hidden" name="Ds_Merchant_MerchantCode" value="5556123123" />
-			<input type="hidden" name="Ds_Merchant_Terminal" value="1" />
-			<input type="hidden" name="Ds_Merchant_TransactionType" value="0" />
-			<input type="hidden" name="Ds_Merchant_Titular" value="Agustín" />
-			<input type="hidden" name="Ds_Merchant_MerchantName" value="MassiveDynamics" />
-			<input type="hidden" name="Ds_Merchant_MerchantURL" value="http://agustin.pro/callback" />
-			<input type="hidden" name="Ds_Merchant_ProductDescription" value="Long Sword" />
-			<input type="hidden" name="Ds_Merchant_ConsumerLanguage" value="001" />
-			<input type="hidden" name="Ds_Merchant_UrlOK" value="" />
-			<input type="hidden" name="Ds_Merchant_UrlKO" value="" />
-			<input type="hidden" name="Ds_Merchant_PayMethods" value="T" />
-			<input type="hidden" name="Ds_Merchant_MerchantSignature" value="AB44EAC503809841C9BC767C6343B135CE17EE16" />
+		<form action="http://sis-d.redsys.es/sis/realizarPago" method="post" id="sermepaForm" name="sermepaForm" >
+			<input type="hidden" name="Ds_SignatureVersion" value="HMAC_SHA256_V1"/>
+			<input type="hidden" name="Ds_MerchantParameters" value="eyJEc19NZXJjaGFudF9BbW91bnQiOjQ1NTQsIkRzX01lcmNoYW50X0N1cnJlbmN5IjoiOTc4IiwiRHNfTWVyY2hhbnRfT3JkZXIiOiIyMDE0MDlraWxsZ3QiLCJEc19NZXJjaGFudF9NZXJjaGFudERhdGEiOm51bGwsIkRzX01lcmNoYW50X01lcmNoYW50Q29kZSI6NTU1NjEyMzEyMywiRHNfTWVyY2hhbnRfVGVybWluYWwiOjEsIkRzX01lcmNoYW50X1RyYW5zYWN0aW9uVHlwZSI6MCwiRHNfTWVyY2hhbnRfVGl0dWxhciI6IkFndXN0XHUwMGVkbiIsIkRzX01lcmNoYW50X01lcmNoYW50TmFtZSI6Ik1hc3NpdmVEeW5hbWljcyIsIkRzX01lcmNoYW50X01lcmNoYW50VVJMIjoiaHR0cDpcL1wvYWd1c3Rpbi5wcm9cL2NhbGxiYWNrIiwiRHNfTWVyY2hhbnRfUHJvZHVjdERlc2NyaXB0aW9uIjoiTG9uZyBTd29yZCIsIkRzX01lcmNoYW50X0NvbnN1bWVyTGFuZ3VhZ2UiOiIwMDEiLCJEc19NZXJjaGFudF9VcmxPSyI6bnVsbCwiRHNfTWVyY2hhbnRfVXJsS08iOm51bGwsIkRzX01lcmNoYW50X1BheU1ldGhvZHMiOiJUIn0="/>
+			<input type="hidden" name="Ds_Signature" value="4RvVYv/GaPyQKnCPwVaj5j27ZgY5o5soFr/v6wUtoMA="/>
 		<script>document.forms["sermepaForm"].submit();</script></form>';
 
 		$this->assertEquals($realHTML, $renderedHTML);
@@ -201,12 +188,45 @@ class RequestTest extends PHPUnit_Framework_TestCase {
 
 	public function testCheckAutenticity()
 	{
+		$notifData = [
+			'Ds_SignatureVersion' => 'HMAC_SHA256_V1',
+			'Ds_Signature' => 'E5cQa4JGo3nHOmRdDzpph4Ar_3RewlLOcUnnJMCdYFM=',
+			'Ds_MerchantParameters' => base64_encode(json_encode([
+				"Ds_TransactionType" => "0",
+				"Ds_Card_Country" => "724",
+				"Ds_Date" => "29/09/2014",
+				"Ds_SecurePayment" => "1",
+				"Ds_Order" => "201409killgt",
+				"Ds_Hour" => "23:14",
+				"Ds_Response" => "0000",
+				"Ds_AuthorisationCode" => "160099",
+				"Ds_Currency" => "978",
+				"Ds_ConsumerLanguage" => "1",
+				"Ds_MerchantCode" => "5556123123",
+				"Ds_Amount" => "4554",
+				"Ds_Terminal" => "001"
+			]))
+		];
+
+		$request = new Request(5556123123, 'Mk9m98IfEblmPfrpsawt7BmxObt98Jev', false, 1, 'MassiveDynamics');
+
+		$request->setAmount(45.54);
+		$request->setOrder('201409killgt');
+		$request->setCallbackURL('http://agustin.pro/callback'); //dont try, doesn't exists
+		$request->setPayer('Agustín');
+		$request->setProductDescription('Long Sword');
+		$request->signature();
+
+		$this->assertTrue(!!$request->checkCallback($notifData));
+	}
+
+	public function testJson()
+	{
 		$postData = [
 			"Ds_TransactionType" => "0",
 			"Ds_Card_Country" => "724",
 			"Ds_Date" => "29/09/2014",
 			"Ds_SecurePayment" => "1",
-			"Ds_Signature" => "F0E49C153196F98FDCF77627014078CBF2FFD506",
 			"Ds_Order" => "201409killgt",
 			"Ds_Hour" => "23:14",
 			"Ds_Response" => "0000",
@@ -218,15 +238,8 @@ class RequestTest extends PHPUnit_Framework_TestCase {
 			"Ds_Terminal" => "001"
 		];
 
-		$request = new Request(5556123123, 'abcdefg123456', false, 1, 'MassiveDynamics');
+		$request = new Request(5556123123, 'Mk9m98IfEblmPfrpsawt7BmxObt98Jev', false, 1, 'MassiveDynamics');
 
-		$request->setAmount(45.54);
-		$request->setOrder('201409killgt');
-		$request->setCallbackURL('http://agustin.pro/callback'); //dont try, doesn't exists
-		$request->setPayer('Agustín');
-		$request->setProductDescription('Long Sword');
-		$request->signature();
-
-		$this->assertTrue($request->checkCallback($postData));
+		$json = $request->json();
 	}
 }

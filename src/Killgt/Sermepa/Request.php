@@ -34,7 +34,7 @@ class Request {
 	protected $method = 'T';
 
 	private $productionURL = 'https://sis.sermepa.es/sis/realizarPago';
-	private $testURL = 'https://sis-t.redsys.es:25443/sis/realizarPago';
+	private $testURL = 'http://sis-d.redsys.es/sis/realizarPago';
 
 
 	public function __construct($fuc = null, $key = null, $production = false, $terminal = 1, $businessName = null)
@@ -59,10 +59,15 @@ class Request {
 			throw new IncompleteRequestException;
 		}
 
-		$signatureData = $this->amount . $this->order . $this->fuc . $this->currency;
-		$signatureData .= $this->transactionType . $this->callbackURL . $this->key;
+		$key = base64_decode($this->getKey());
 
-		return strtoupper(sha1($signatureData));
+		$parameters = $this->compileParameters();
+
+		$key = $this->encrypt_3DES($this->getOrder(), $key);
+
+		$respuesta = hash_hmac('sha256', $parameters, $key, true);
+
+		return base64_encode($respuesta);
 	}
 
 	/**
@@ -96,30 +101,65 @@ class Request {
 	}
 
 	/**
+	 * Converts all parameters to json
+	 * @return string
+	 */
+	public function json()
+	{
+
+		return json_encode([
+			"Ds_Merchant_Amount" => $this->getAmount(),
+			"Ds_Merchant_Currency" => $this->getCurrency(),
+			"Ds_Merchant_Order" => $this->getOrder(),
+			"Ds_Merchant_MerchantData" => $this->getMerchantData(),
+			"Ds_Merchant_MerchantCode" => $this->getFuc(),
+			"Ds_Merchant_Terminal" => $this->getTerminal(),
+			"Ds_Merchant_TransactionType" => $this->getTransactionType(),
+			"Ds_Merchant_Titular" => $this->getPayer(),
+			"Ds_Merchant_MerchantName" => $this->getBusinessName(),
+			"Ds_Merchant_MerchantURL" => $this->getCallbackURL(),
+			"Ds_Merchant_ProductDescription" => $this->getProductDescription(),
+			"Ds_Merchant_ConsumerLanguage" => $this->getLanguage(),
+			"Ds_Merchant_UrlOK" => $this->getSuccessURL(),
+			"Ds_Merchant_UrlKO" => $this->getErrorURL(),
+			"Ds_Merchant_PayMethods" => $this->getMethod(),
+		]);
+	}
+
+	public function compileParameters()
+	{
+		return base64_encode($this->json());
+	}
+
+	/**
 	 * Check if the POST data received its a valid
-	 * @return boolean
+	 * @return array respuesta
 	 */
 	public function checkCallback($postData)
 	{
-			$Ds_Response     = $postData['Ds_Response'];
-			$Ds_Amount       = $postData['Ds_Amount'];
-			$Ds_Order        = $postData['Ds_Order'];
-			$Ds_MerchantCode = $postData['Ds_MerchantCode'];
-			$Ds_Currency     = $postData['Ds_Currency'];
-			$Ds_Date         = $postData['Ds_Date'];
-			$signature       = $postData['Ds_Signature'];
+		$version = $postData["Ds_SignatureVersion"];
+		$parameters = $postData["Ds_MerchantParameters"];
+		$signature = $postData["Ds_Signature"];
 
-			$newSignature = strtoupper(sha1($Ds_Amount . $Ds_Order . $Ds_MerchantCode . $Ds_Currency . $Ds_Response . $this->getKey()));
+		$key = base64_decode($this->getKey());
 
-			if ($signature != $newSignature) {
-				throw new CallbackErrorException("Cannot check the authenticate the request, check all the fields are filled");
-			}
+		$parameters = base64_decode(strtr($parameters, '-_', '+/'));
+		$parameters = json_decode($parameters, true);
 
-			if ( (int)$Ds_Response >= 100) {
-				throw new CallbackErrorException("Invalid DS_Response returned", $Ds_Response);
-			}
+		$key = $this->encrypt_3DES($parameters['Ds_Order'], $key);
 
-		    return true;
+		$result = hash_hmac('sha256', $postData["Ds_MerchantParameters"], $key, true);
+		$newSignature = strtr(base64_encode($result), '+/', '-_');
+
+		if ($signature != $newSignature) {
+			throw new CallbackErrorException("Cannot check the authenticate the request, check all the fields are filled");
+		}
+
+		if ( (int)$parameters['Ds_Response'] >= 100) {
+			throw new CallbackErrorException("Invalid ds_response returned", $postData['Ds_Response']);
+		}
+
+	    return $parameters;
 	}
 
 	/**
@@ -183,24 +223,14 @@ class Request {
 	 */
 	public function render($autoSubmit = true)
 	{
+		$parameters = $this->compileParameters();
+		$signature = $this->signature();
+
 		$html = "
 		<form action=\"{$this->getURL()}\" method=\"post\" id=\"sermepaForm\" name=\"sermepaForm\" >
-			<input type=\"hidden\" name=\"Ds_Merchant_Amount\" value=\"{$this->getAmount()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_Currency\" value=\"{$this->getCurrency()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_Order\" value=\"{$this->getOrder()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_MerchantData\" value=\"{$this->getMerchantData()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_MerchantCode\" value=\"{$this->getFuc()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_Terminal\" value=\"{$this->getTerminal()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_TransactionType\" value=\"{$this->getTransactionType()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_Titular\" value=\"{$this->getPayer()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_MerchantName\" value=\"{$this->getBusinessName()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_MerchantURL\" value=\"{$this->getCallbackURL()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_ProductDescription\" value=\"{$this->getProductDescription()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_ConsumerLanguage\" value=\"{$this->getLanguage()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_UrlOK\" value=\"{$this->getSuccessURL()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_UrlKO\" value=\"{$this->getErrorURL()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_PayMethods\" value=\"{$this->getMethod()}\" />
-			<input type=\"hidden\" name=\"Ds_Merchant_MerchantSignature\" value=\"{$this->signature()}\" />
+			<input type=\"hidden\" name=\"Ds_SignatureVersion\" value=\"HMAC_SHA256_V1\"/>
+			<input type=\"hidden\" name=\"Ds_MerchantParameters\" value=\"{$parameters}\"/>
+			<input type=\"hidden\" name=\"Ds_Signature\" value=\"{$signature}\"/>
 		";
 
 		if ($autoSubmit) {
@@ -559,5 +589,14 @@ class Request {
 	public function getBusinessName()
 	{
 		return $this->businessName;
+	}
+
+	/******  3DES Function  ******/
+	private function encrypt_3DES($message, $key){
+		$bytes = array(0,0,0,0,0,0,0,0);
+		$iv = implode(array_map("chr", $bytes));
+
+		$ciphertext = mcrypt_encrypt(MCRYPT_3DES, $key, $message, MCRYPT_MODE_CBC, $iv);
+		return $ciphertext;
 	}
 }
