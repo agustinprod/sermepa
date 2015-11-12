@@ -42,7 +42,7 @@ class RequestTest extends PHPUnit_Framework_TestCase {
 
 	public function testGetURL()
 	{
-		$testURL = "http://sis-d.redsys.es/sis/realizarPago";
+		$testURL = "https://sis-t.redsys.es:25443/sis/realizarPago";
 		$productionURL = "https://sis.sermepa.es/sis/realizarPago";
 
 		$request = new Request;
@@ -176,7 +176,7 @@ class RequestTest extends PHPUnit_Framework_TestCase {
 
 
 		$realHTML = '
-		<form action="http://sis-d.redsys.es/sis/realizarPago" method="post" id="sermepaForm" name="sermepaForm" >
+		<form action="https://sis-t.redsys.es:25443/sis/realizarPago" method="post" id="sermepaForm" name="sermepaForm" >
 			<input type="hidden" name="Ds_SignatureVersion" value="HMAC_SHA256_V1"/>
 			<input type="hidden" name="Ds_MerchantParameters" value="eyJEc19NZXJjaGFudF9BbW91bnQiOjQ1NTQsIkRzX01lcmNoYW50X0N1cnJlbmN5IjoiOTc4IiwiRHNfTWVyY2hhbnRfT3JkZXIiOiIyMDE0MDlraWxsZ3QiLCJEc19NZXJjaGFudF9NZXJjaGFudERhdGEiOm51bGwsIkRzX01lcmNoYW50X01lcmNoYW50Q29kZSI6NTU1NjEyMzEyMywiRHNfTWVyY2hhbnRfVGVybWluYWwiOjEsIkRzX01lcmNoYW50X1RyYW5zYWN0aW9uVHlwZSI6MCwiRHNfTWVyY2hhbnRfVGl0dWxhciI6IkFndXN0XHUwMGVkbiIsIkRzX01lcmNoYW50X01lcmNoYW50TmFtZSI6Ik1hc3NpdmVEeW5hbWljcyIsIkRzX01lcmNoYW50X01lcmNoYW50VVJMIjoiaHR0cDpcL1wvYWd1c3Rpbi5wcm9cL2NhbGxiYWNrIiwiRHNfTWVyY2hhbnRfUHJvZHVjdERlc2NyaXB0aW9uIjoiTG9uZyBTd29yZCIsIkRzX01lcmNoYW50X0NvbnN1bWVyTGFuZ3VhZ2UiOiIwMDEiLCJEc19NZXJjaGFudF9VcmxPSyI6bnVsbCwiRHNfTWVyY2hhbnRfVXJsS08iOm51bGwsIkRzX01lcmNoYW50X1BheU1ldGhvZHMiOiJUIn0="/>
 			<input type="hidden" name="Ds_Signature" value="4RvVYv/GaPyQKnCPwVaj5j27ZgY5o5soFr/v6wUtoMA="/>

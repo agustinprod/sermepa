@@ -34,7 +34,7 @@ class Request {
 	protected $method = 'T';
 
 	private $productionURL = 'https://sis.sermepa.es/sis/realizarPago';
-	private $testURL = 'http://sis-d.redsys.es/sis/realizarPago';
+	private $testURL = 'https://sis-t.redsys.es:25443/sis/realizarPago';
 
 
 	public function __construct($fuc = null, $key = null, $production = false, $terminal = 1, $businessName = null)
