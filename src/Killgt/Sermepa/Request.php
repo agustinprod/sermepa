@@ -33,7 +33,7 @@ class Request {
 	protected $languageCode = 'es';
 	protected $method = 'T';
 
-	private $productionURL = 'https://sis.sermepa.es/sis/realizarPago';
+	private $productionURL = 'https://sis.redsys.es/sis/realizarPago';
 	private $testURL = 'https://sis-t.redsys.es:25443/sis/realizarPago';
 
 
@@ -156,7 +156,7 @@ class Request {
 		}
 
 		if ( (int)$parameters['Ds_Response'] >= 100) {
-			throw new CallbackErrorException("Invalid ds_response returned", $postData['Ds_Response']);
+			throw new CallbackErrorException("Invalid ds_response returned", $parameters['Ds_Response']);
 		}
 
 	    return $parameters;
