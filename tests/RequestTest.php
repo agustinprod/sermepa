@@ -43,7 +43,7 @@ class RequestTest extends PHPUnit_Framework_TestCase {
 	public function testGetURL()
 	{
 		$testURL = "https://sis-t.redsys.es:25443/sis/realizarPago";
-		$productionURL = "https://sis.sermepa.es/sis/realizarPago";
+		$productionURL = "https://sis.redsys.es/sis/realizarPago";
 
 		$request = new Request;
 		$url = $request->getURL();
