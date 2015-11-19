@@ -9,6 +9,12 @@ PHP Sermepa payments utility
 ```php
 use Killgt\Sermepa\Request;
 
+$fuc = "999008881";
+$key = "Mk9m98IfEblmPfrpsawt7BmxObt98Jev";
+$useProductionEnviroment = false;
+$terminal = "871";
+$businessName = "Massive Dynamic";
+
 $request = new Killgt\Sermepa\Request($fuc, $key, $useProductionEnviroment, $terminal, $businessName);
 
 $request->setAmount(45.54);
@@ -28,8 +34,8 @@ echo $request->render(); //outputs the form and auto-submit
 $request = new Killgt\Sermepa\Request;
 $request->setKey($key);
 
-if ($request->checkCallback($_POST)) {
-	// Get $_POST['Ds_Order'] and update your order
+if ($response = $request->checkCallback($_POST)) {
+	// Get $response['Ds_Order'] and update your order
 } else {
 	// Something went wrong
 }
