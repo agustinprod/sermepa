@@ -98,6 +98,9 @@ class RequestTest extends PHPUnit_Framework_TestCase {
 
 		$invalidOrderNumber = '2014aaaccccdddbcc11';
 		$request->setOrder($invalidOrderNumber);
+
+		$invalidOrderNumber = '1636T0000344123123';
+		$request->setOrder($invalidOrderNumber);
 	}
 
 	public function testSetAmount()

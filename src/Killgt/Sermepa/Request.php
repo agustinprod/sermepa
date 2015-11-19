@@ -379,7 +379,7 @@ class Request {
 	 */
 	public function setOrder($orderNumber)
 	{
-		if ( ! preg_match('/([0-9]{4})([a-zA-Z0-9]{8})/', $orderNumber) )
+		if ( ! preg_match('/^([0-9]{4})([a-zA-Z0-9]{8})$/', $orderNumber) )
 			throw new InvalidOrderNumberException;
 
 		$this->order = $orderNumber;
