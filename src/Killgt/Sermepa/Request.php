@@ -107,7 +107,7 @@ class Request {
 	public function json()
 	{
 
-		return json_encode([
+		return json_encode(array(
 			"Ds_Merchant_Amount" => $this->getAmount(),
 			"Ds_Merchant_Currency" => $this->getCurrency(),
 			"Ds_Merchant_Order" => $this->getOrder(),
@@ -123,7 +123,7 @@ class Request {
 			"Ds_Merchant_UrlOK" => $this->getSuccessURL(),
 			"Ds_Merchant_UrlKO" => $this->getErrorURL(),
 			"Ds_Merchant_PayMethods" => $this->getMethod(),
-		]);
+		));
 	}
 
 	public function compileParameters()
@@ -152,11 +152,11 @@ class Request {
 		$newSignature = strtr(base64_encode($result), '+/', '-_');
 
 		if ($signature != $newSignature) {
-			throw new CallbackErrorException("Cannot check the authenticate the request, check all the fields are filled");
+			throw new CallbackErrorException("Cannot check the authenticate the request, check all the fields are filled", 0, $parameters);
 		}
 
 		if ( (int)$parameters['Ds_Response'] >= 100) {
-			throw new CallbackErrorException("Invalid ds_response returned", $parameters['Ds_Response']);
+			throw new CallbackErrorException("Invalid ds_response returned", $parameters['Ds_Response'], $parameters);
 		}
 
 	    return $parameters;
@@ -380,7 +380,7 @@ class Request {
 	public function setOrder($orderNumber)
 	{
 		if ( ! preg_match('/^([0-9]{4})([a-zA-Z0-9]{8})$/', $orderNumber) )
-			throw new InvalidOrderNumberException;
+			throw new InvalidOrderNumberException("{$orderNumber} is not a valid order number");
 
 		$this->order = $orderNumber;
 	}
