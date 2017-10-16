@@ -159,7 +159,7 @@ class Request {
 			throw new CallbackErrorException("Invalid ds_response returned", $parameters['Ds_Response'], $parameters);
 		}
 
-	    return $parameters;
+		return $parameters;
 	}
 
 	/**
@@ -592,11 +592,10 @@ class Request {
 	}
 
 	/******  3DES Function  ******/
-	private function encrypt_3DES($message, $key){
-		$bytes = array(0,0,0,0,0,0,0,0);
-		$iv = implode(array_map("chr", $bytes));
+	private function encrypt_3DES($message, $key)
+	{
+		$l = ceil(strlen($message) / 8) * 8;
 
-		$ciphertext = mcrypt_encrypt(MCRYPT_3DES, $key, $message, MCRYPT_MODE_CBC, $iv);
-		return $ciphertext;
+		return substr(openssl_encrypt($message . str_repeat("\0", $l - strlen($message)), 'des-ede3-cbc', $key, OPENSSL_RAW_DATA, "\0\0\0\0\0\0\0\0"), 0, $l);
 	}
 }
